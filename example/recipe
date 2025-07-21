@@ -1,0 +1,28 @@
+# Comments
+@import another-recipe
+@increment true
+
+main.cc:
+    out = "main"
+    bin = "bin"
+    pkg_in = [
+        "gtk+-3.0"
+    ]
+    include = [
+        "include"
+    ]
+    lib = [
+        "SDL2"
+    ]
+
+
+gui.cc: out = "gui"
+
+
+global:
+    exec = [
+        "main"
+    ]
+    command = [
+        "ls"
+    ]

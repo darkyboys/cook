@@ -1,0 +1,18 @@
+# Copyright (c) ghgltggamer 2025
+# Cook Build System - MIT Licensed
+# This is the build file for the cook build system to build itself
+# This file is intented to be executed by the Cook Build system
+# For the source code , Please checkout the Official Cook Build System Repository at GitHub by darkyboys
+
+@show_logs true # Allow Logging for console log of the build process
+
+src/cook.cc: # This can be just written as src/cook.cc: out = "cook" but is written for improving the redablity
+    out = "cook" # Optiona1l but recommended
+    bin = "bin" # Optional
+
+# Run, cook install or bin/cook install if you don't have an installed Cook Build System version
+# Alternative build commands are:
+# mkdir bin
+# g++ src/cook.cc -o bin/cook
+# sudo mv bin/cook /usr/local/bin
+# But don't expect incremental builds without Cook Build System

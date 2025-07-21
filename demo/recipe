@@ -1,0 +1,19 @@
+# @show_logs true
+
+# @system echo "Hello world 2025"
+
+# demo/main.cc:
+#     system = "ls"
+#     psystem = "echo hy"
+#     out = "main"
+#     bin = "bin"
+
+# @system echo "Hello world 20252"
+
+
+# demo/main_copy.cc: out = "dmain"
+
+demo/gui.cc:
+    pkg_in = "gtk+-3.0"
+    out = "gui"
+

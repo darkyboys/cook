@@ -1,0 +1,6 @@
+echo "Hello world"
+ls
+cook.allow.logging
+echo "Total cores "
+echo `nproc`
+echo ""

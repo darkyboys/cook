@@ -1,0 +1,4 @@
+echo "Cook Build System Installing..."
+mv bin/cook /usr/local/bin
+echo "Process Finished"
+echo ""
