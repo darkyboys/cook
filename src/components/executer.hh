@@ -19,7 +19,7 @@ namespace Cook{
         for (unsigned long long i = 0;i < source_file_and_commands.size();i++){
             std::string source_file_name = source_file_and_commands[i][0];
             std::string source_file_command = source_file_and_commands[i][1];
-            Cook::Log("Building `" + source_file_name + "` Progress --> " + std::to_string((i/source_file_and_commands.size())*100) + "");
+            Cook::Log("Building `" + source_file_name + "` Progress --> " + std::to_string((float(i+1)/float(source_file_and_commands.size())*100)) + "%");
             Cook::Log("Building Commands:  `" + source_file_command + "`");
             std::system (source_file_command.c_str());
 

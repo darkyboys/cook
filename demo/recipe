@@ -1,19 +1,13 @@
-# @show_logs true
+@show_logs true
 
-# @system echo "Hello world 2025"
+global:
+    # pkg_in = "gtk+-3.0"
+    bin = "demo-bin"
+    compiler = "clang++"
 
-# demo/main.cc:
-#     system = "ls"
-#     psystem = "echo hy"
-#     out = "main"
-#     bin = "bin"
-
-# @system echo "Hello world 20252"
-
-
-# demo/main_copy.cc: out = "dmain"
+demo/main.cc: out = "main"
+demo/main_copy.cc: out = "main_copy"
 
 demo/gui.cc:
     pkg_in = "gtk+-3.0"
     out = "gui"
-

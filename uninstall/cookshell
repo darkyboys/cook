@@ -1,0 +1,5 @@
+echo "Cook Build System UN-Installing..."
+mkdir bin 2> /dev/null
+mv /usr/local/bin/cook bin
+echo "Process Finished"
+echo ""

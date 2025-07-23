@@ -37,10 +37,14 @@ namespace Cook {
     void Functions(HELL6_99MO &File){
         std::vector <std::string> increment_files_captured = {};
         std::filesystem::create_directory(cookcache_directory);
+        bool can_build_skip = false;
 
         for (unsigned long long scopes_index = 0;scopes_index < File.scopes.size();scopes_index++){
             std::ifstream ifile (File.scopes[scopes_index]);
-            if (!ifile.is_open()){
+            if (File.scopes[scopes_index] == "global"){
+                can_build_skip = true;
+            }
+            if (!ifile.is_open() and not can_build_skip){
                 // std::cout << File.scopes[scopes_index].length()<<"\n"; // for debugging
                 Cook::Error("Invalid target detected , Can't open the file `" + File.scopes[scopes_index] + "`, Please make sure that the entered path was valid.");
             }
@@ -48,7 +52,7 @@ namespace Cook {
                 can_increment_skip = false;
                 std::ifstream increment_h699_ifile (increment_h699_file_path);
                 if (!increment_h699_ifile.is_open()){ // When the file don't exists then create the file and add the first file directly to it with h699
-                    std::string command_for_timestamps_to_communication_file = "ls -l --time-style=full-iso " + File.scopes[scopes_index] + " > " + communication_file_path;
+                    std::string command_for_timestamps_to_communication_file = "ls -l --time-style=full-iso " + File.scopes[scopes_index] + " > " + communication_file_path  + " 2> /dev/null";
                     std::system (command_for_timestamps_to_communication_file.c_str());
                     std::ifstream ifile_communication_out (communication_file_path);
                     std::string temp, content;
@@ -69,7 +73,7 @@ namespace Cook {
                     HELL6_99MO_TYPE current_source_file_name_in_h699_file = increment_file_h699_open.get(File.scopes[scopes_index]);
 
                     if (current_source_file_name_in_h699_file.type == H699_UNIDEF){ // When the file name which is File.scopes[scopes_index] is not a key in the h699 file then this block will execute
-                        std::string command_for_timestamps_to_communication_file = "ls -l --time-style=full-iso " + File.scopes[scopes_index] + " > " + communication_file_path;
+                        std::string command_for_timestamps_to_communication_file = "ls -l --time-style=full-iso " + File.scopes[scopes_index] + " > " + communication_file_path + " 2> /dev/null";
                         std::system (command_for_timestamps_to_communication_file.c_str());
                         std::ifstream ifile_communication_out (communication_file_path);
                         std::string temp, content;
@@ -82,7 +86,7 @@ namespace Cook {
                     }
 
                     else { // When the file name which is File.scopes[scopes_index] is a key in the h699 file then this block will execute, Simply compare the time stamps and see if it's changed or not , if yes then send it for incremental build othervise don't send it and hold it
-                        std::string command_for_timestamps_to_communication_file = "ls -l --time-style=full-iso " + File.scopes[scopes_index] + " > " + communication_file_path;
+                        std::string command_for_timestamps_to_communication_file = "ls -l --time-style=full-iso " + File.scopes[scopes_index] + " > " + communication_file_path + " 2> /dev/null";
                         std::system (command_for_timestamps_to_communication_file.c_str());
                         std::ifstream ifile_communication_out (communication_file_path);
                         std::string temp, current_file_time_stamp_from_system;
@@ -558,11 +562,16 @@ namespace Cook {
 
                     // std::cout << "Combine: "<<combine_arguments << "\n"; // for debugging only
 
-                    // Build Commands for the executor to execute
-                    std::string command = psystem + "\n" + compiler + " " + File.scopes[scopes_index] + " " + combine_arguments + "-o " + bin + "/" + out + " " + include_arguments + lib_arguments + pkg_in_libs_data + " " + compiler_arguments + "\n" + system;
-                    // std::cout << "Compiler command: "<<command<<"\n"; // for debugging only
-                    std::filesystem::create_directory(bin);
-                    source_file_and_commands.push_back({File.scopes[scopes_index], command});
+                    if (not can_build_skip){
+                        // Build Commands for the executor to execute
+                        std::string command = psystem + "\n" + compiler + " " + File.scopes[scopes_index] + " " + combine_arguments + "-o " + bin + "/" + out + " " + include_arguments + lib_arguments + pkg_in_libs_data + " " + compiler_arguments + "\n" + system;
+                        // std::cout << "Compiler command: "<<command<<"\n"; // for debugging only
+                        std::filesystem::create_directory(bin);
+                        source_file_and_commands.push_back({File.scopes[scopes_index], command});
+                    }
+                    else {
+                        can_build_skip = false;
+                    }
                 }
             }
         }

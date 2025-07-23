@@ -162,6 +162,10 @@ cli.cc:
 
 Ignore out but this defines a simple file named `cli.cc` with the output name `cli` , And this is what the cook build system will make.
 
+### Global target
+`global` is a special target in the cook recipe file which tells the cook build system that this is not a source file but still you must remember the configurations from here , Means anything inside the global key will be applied to all the scopes , Means you can define the config once and just say `filename.cc: out = "filename.out"` in your recipe for every file because anything defined in global will be automatically applied to other scopes too.
+
+
 #### Known Keys
 These are very important as they defines the main rules your compiler will follow to compile your files.
 
