@@ -7,7 +7,7 @@
 */
 
 #ifndef COOK_VERSION
-#define COOK_VERSION 1
+#define COOK_VERSION 2
 
 // Headers
 #include "needed.hh"
@@ -15,6 +15,7 @@
 // main
 int main (int argc, char* argv[]){
     Cook::increment = true;
+    std::string path = ".";
     if (argc == 2){
         std::string argument = argv[1];
         if (argument == "--version" or argument == "-v")
@@ -30,6 +31,7 @@ int main (int argc, char* argv[]){
         std::string argument = argv[2];
         if (argument == "-i" or argument == "--increment"){
             Cook::increment = true;
+            path = argv[1];
         }
     }
 
@@ -39,9 +41,11 @@ int main (int argc, char* argv[]){
             std::string increment = argv[3];
             if (increment.find("true") != std::string::npos){
                 Cook::increment = true;
+                path = argv[1];
             }
             else if (increment.find("false") != std::string::npos){
                 Cook::increment = false;
+                path = argv[1];
             }
             else {
                 Cook::Error("-i or --increment needs either true or false as turn on/off flags, Please pass either true or false to ignore this error");
@@ -50,7 +54,7 @@ int main (int argc, char* argv[]){
     }
 
 
-    Cook::Parse(".");
+    Cook::Parse(path);
 }
 
 
