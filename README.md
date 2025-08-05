@@ -108,6 +108,8 @@ This happened because CMake roughly took 0.394s to generate a Make File but then
 
 *So this test shows that cook is faster than CMake + Make combined , by almost 52% on normal builds and i guess almost 60% in incremental builds, Overall this is rough calculation.*
 
+ > For more deep benchmark please refer the [benchmark.txt](benchmark.txt) file.
+
 ---
 
 ## Documentation
@@ -137,14 +139,29 @@ Now you can just write `cook` in there shell to execute the `recipe` and `cook i
 The Cook build system official implementation allows you to build in 2 ways!
  - Normal Build
  - Incremental Build
+ - Parallel Build
 
 **Normal Build** is just normally the build where all your source files will be compiled no matter what.
 **Incremental Build** is a build type where only the required files will be build , Other files won't, For example you just updated a single file then only that file will be built others won't. (This dramatically saves a lots of time in big projects)
 
 Now the default build type the Cook Build System uses is incremental build but in case you want Normal Build , You can say `cook path/to/recipe -i or --increment false , Because false turns off the incremental builds and true turns them on and by default it's set to true. 
 
-**Argument Format**, Cook follows a simple argument format , Where `cook` as the first argument is compulsory to launch it and 2nd argument of your shell is the path to the recipe file cook will look for , In case it can't find recipe , It will look for cookshell , if cookshell is also not there then it will throw error. And the remaining arguments are just optional arguments like `-i`.
+ > This part was removed in COOK3 due to massive change in flexiblity of CLI Frontend. **Argument Format**, Cook follows a simple argument format , Where `cook` as the first argument is compulsory to launch it and 2nd argument of your shell is the path to the recipe file cook will look for , In case it can't find recipe , It will look for cookshell , if cookshell is also not there then it will throw error. And the remaining arguments are just optional arguments like `-i`.
+ 
+**Parallel Build** is a build which covers both incremental and normal builds but it allows you to build soo many C++ source files in together at the same time , For example you can compile 5 files in same time as you would compile 1 because now the build system will parallely compile all the 5 files. The limits of file compilation in parallel is called thread limits , Since cook uses threads for parallel processing so it needs you to define how many threads you want to use (How many files can go together in parallel compilation at a time) and use this number very carefully as soo many threads may harm your cpu , It's naturally recommended to use 6 - 8 threads but if you have a fast cpu then you can use more threads also , This will dramatically change the compilation speed but also add a lot more load on your cpu in same way so use it carefully.
 
+ > Cook uses an advanced algorithm for parallel compilation where your cpu will never sit idle , When ever a thread is free as a file was compiled , Cook will add another file to compile without waiting for other files to be compiled , This allows for always filled inventory which decreases the compilation time overall.
+
+**Arguments**: In COOK3 anything starts with a `-` symbol or `--` symbol is considered an argument to the build system which cook will handle very carefully because these arguments tells the build system to do something and anything non-argument is considered the path overwrite to your recipe file or cookshell file.
+
+*Known Arguments*
+ - --v / --version : These arguments will print the versin of the cook build system and won't do any compilation, They also don't takesn any input
+ - --p / --parallel : These arguments also don't takes any input but they enables the parallel builds which by default are disabled in cook
+ - --t / --threads : These arguments takes input as the next shell argument so overwrite the thread limits and these can only take numeric values but these will only work if -p was present to enable parallel builds othervise they are not useful at all e.g (cook -p -t 6, This will tell cook build system to use 6 threads for parallel processing! By default 1 and the minimum thread required is also 1).
+ - --i / --increment : These arguments also takes input as the next shell argument but they only takes true / false as input and enables and disables the incremental builds (by default true)
+ 
+ > Anything without - or -- will be considered the path overwrite like `cook . -p -t 6 -i true` here the `.` is the path telling cook build system to look for recipe or cookshell file in the current directory. Also order of these arguments don't matters so feel free to write them in anyway you wish.
+ 
 ### Targets
 Targets are your complete source file configuration block which are converted to equivalent shell commands by the Cook Build System. (In case incremental build is applied to a target then the entire block will be ignored)
 
