@@ -1,0 +1,2 @@
+cook.allow.logging
+rm -rf bin CookCache demo-bin
