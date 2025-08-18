@@ -6,12 +6,12 @@
 ---
 
 ## Why Would You Need Cook As Your Build System When Make And CMake Already Exists?
-You need cook when you are working on a very complex project and you just want to write very simple build files but also very functional with very high redality , Cook comes in there as it uses the [H699](https://github.com/darkyboys/hell6.99mo) as it's scripting language for it's build files , Which makes it insanely redable for large scale applications , Then cook build system is roughlt 50% faster than CMake + Make at compiling the same project and the difference increases with the source files, Also Cook is fully open source and highly optimised for compiling C and C++ programs especially with GNU GCC as it is fully written with the C++ STL and H699 Library for it's Scripting Language.
+You need cook when you are working on a very complex project and you just want to write very simple build files but also very functional with very high redablity , Cook comes in there as it uses the [H699](https://github.com/darkyboys/hell6.99mo) as it's scripting language for it's build files , Which makes it insanely redable for large scale applications , Then cook build system is roughlt 50% faster than CMake + Make at compiling the same project and the difference increases with the source files, Also Cook is fully open source and highly optimised for compiling C and C++ programs especially with GNU GCC as it is fully written with the C++ STL and H699 Library for it's Scripting Language.
 
 ---
 
 ## When You May Avoid Using Cook
-When your project is outside of C and C++ , Cook can't be used as it's designed specifically for C and C++ compilers but it can work with other compilers who shares similar structure. Cook can't compile libraries means if you want to use libraries then don't use Cook , It just can't make any libraries as of it's current version , In future library support may be added , Small and Passion driven project (Cook don't have a big community and is alive due to it's passionate developer community which makes this build system awesome) But if your need is a community or something more "premium" then Cook might not be suitable for you.
+When your project is outside of C and C++ , Cook can't be used as it's designed specifically for C and C++ compilers but it can work with other compilers who shares similar structure. 
 
 ---
 
@@ -207,6 +207,9 @@ These are in 2 types:
 
 ##### compiler_arguments - Static string key
 `compiler_arguments` is a key which tells the Cook Build System the arguments you want to give to your compiler , Default is empty.
+
+##### compiler_parguments - Static string key
+`compiler_parguments` stands for the `compiler_primary_arguments` which is a key giving arguments to your compiler before the file name so if you want to make let say object files then say `compiler_parguments = "-c"`.
 
 ##### system - Static string key
 `system` is a key which tells the Cook Build System the command you want to execute when a target is built , This won't run if the target is skipped in incremental builds , Default is empty.

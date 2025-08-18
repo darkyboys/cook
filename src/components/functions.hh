@@ -16,6 +16,7 @@ namespace Cook {
     std::string bin = "bin",
                 system = "",
                 psystem = "",
+                compiler_parguments = "",
                 compiler_arguments = "",
                 compiler = "g++";
     std::vector <std::string> pkg_in,
@@ -201,6 +202,17 @@ namespace Cook {
                         }
                         else {
                             Cook::Error("Syntax Error --> `compiler_arguments` requires an string value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
+                        }
+                    }
+
+
+                    HELL6_99MO_TYPE get_compiler_parguments_value = File.get (File.scopes[scopes_index] + ".compiler_parguments");
+                    if (get_compiler_parguments_value.type != H699_UNIDEF){
+                        if (get_compiler_parguments_value.type == "string"){
+                            compiler_parguments = get_compiler_parguments_value.string_value;
+                        }
+                        else {
+                            Cook::Error("Syntax Error --> `compiler_parguments` requires an string value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
                         }
                     }
 
@@ -564,7 +576,7 @@ namespace Cook {
 
                     if (not can_build_skip){
                         // Build Commands for the executor to execute
-                        std::string command = psystem + "\n" + compiler + " " + File.scopes[scopes_index] + " " + combine_arguments + "-o " + bin + "/" + out + " " + include_arguments + lib_arguments + pkg_in_libs_data + " " + compiler_arguments + "\n" + system;
+                        std::string command = psystem + "\n" + compiler + " " + compiler_parguments + " " + File.scopes[scopes_index] + " " + combine_arguments + "-o " + bin + "/" + out + " " + include_arguments + lib_arguments + pkg_in_libs_data + " " + compiler_arguments + "\n" + system;
                         // std::cout << "Compiler command: "<<command<<"\n"; // for debugging only
                         std::filesystem::create_directory(bin);
                         source_file_and_commands.push_back({File.scopes[scopes_index], command});
