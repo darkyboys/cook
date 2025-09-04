@@ -1,0 +1,15 @@
+@show_logs true
+
+global:
+    combine = [
+        "demo/2/lib.cc",
+        "demo/2/lib2.cc"
+    ]
+
+demo/2/main.cc:
+    out = "main"
+    bin = "demo/2"
+
+demo/2/main2.cc:
+    out = "main2"
+    bin = "demo/2"
