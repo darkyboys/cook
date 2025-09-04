@@ -87,7 +87,7 @@ cmake .
 make
 ```
 
-Now i ran the `build.sh` with time command to meassure the performance and it was insaane , Here's the bench marks.
+Now i ran the `build.sh` with time command to meassure the performance and it was insane , Here's the bench marks.
 
 **Time taken:**
 *First Build*
@@ -235,6 +235,8 @@ These are in 2 types:
 `combine` is a key which tells the Cook Build System to combine multiple C++ source files together to form a single binary , Remember incremental build will only apply to main binary not on combines ones , This also allows single string and arrays of strings.
 
 *Note: Feel free to use _rem and _add to modify the array values like , pkg_in = ["gtk+-3.0", "webkit2gtk-4.0"] now you wanna remove gtk+-3.0 use pkg_in_rem = "gtk+-3.0" and if you want to add use pkg_in_add instead and feel free to give these array or single string as they are dynamic keys*.
+
+ > Cook build system also compares the combine files in the modern version of the cook build system to ensure the robust incremental build support
 
 This documentation covers the basics of Cook 1 Build System , for future updates check other docs.
 
