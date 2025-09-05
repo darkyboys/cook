@@ -213,6 +213,12 @@ class HELL6_99MO{
 
 
 
+                        else if (attribute_name == "callback"){
+                            Cook::Callback_commands += attribute_value + '\n';
+                        }
+
+
+
                         else if (attribute_name == "system"){
                             std::system (attribute_value.c_str());
                         }

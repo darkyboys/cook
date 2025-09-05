@@ -155,10 +155,11 @@ Now the default build type the Cook Build System uses is incremental build but i
 **Arguments**: In COOK3 anything starts with a `-` symbol or `--` symbol is considered an argument to the build system which cook will handle very carefully because these arguments tells the build system to do something and anything non-argument is considered the path overwrite to your recipe file or cookshell file.
 
 *Known Arguments*
- - --v / --version : These arguments will print the versin of the cook build system and won't do any compilation, They also don't takesn any input
- - --p / --parallel : These arguments also don't takes any input but they enables the parallel builds which by default are disabled in cook
- - --t / --threads : These arguments takes input as the next shell argument so overwrite the thread limits and these can only take numeric values but these will only work if -p was present to enable parallel builds othervise they are not useful at all e.g (cook -p -t 6, This will tell cook build system to use 6 threads for parallel processing! By default 1 and the minimum thread required is also 1).
- - --i / --increment : These arguments also takes input as the next shell argument but they only takes true / false as input and enables and disables the incremental builds (by default true)
+ - -v / --version : These arguments will print the versin of the cook build system and won't do any compilation, They also don't takesn any input
+ - -p / --parallel : These arguments also don't takes any input but they enables the parallel builds which by default are disabled in cook
+ - -t / --threads : These arguments takes input as the next shell argument so overwrite the thread limits and these can only take numeric values but these will only work if -p was present to enable parallel builds othervise they are not useful at all e.g (cook -p -t 6, This will tell cook build system to use 6 threads for parallel processing! By default 1 and the minimum thread required is also 1).
+ - -i / --increment : These arguments also takes input as the next shell argument but they only takes true / false as input and enables and disables the incremental builds (by default true)
+ - -d / --doubleshot : This argument also don't takes any input but when called, This disables the `Double Shot`. (`Double Shot` in Cook Build System is a process where the build system calls itself after the building process is finished to ensure if anything is mistakenly left and not built then build it)
  
  > Anything without - or -- will be considered the path overwrite like `cook . -p -t 6 -i true` here the `.` is the path telling cook build system to look for recipe or cookshell file in the current directory. Also order of these arguments don't matters so feel free to write them in anyway you wish.
  
@@ -217,9 +218,6 @@ These are in 2 types:
 ##### psystem - Static string key
 `psystem` is a key which tells the Cook Build System the command you want to execute when a target is built , This won't run if the target is skipped in incremental builds , The only difference in between this and system is that this runs before the compiler and system runs after the compiler which is why it stands for primary system, Default is empty.
 
-##### show_logs - Static boolean key
-`show_logs` is a key which tells the Cook Build System to show the logs or not. Default is false.
-
 **Dynamic Array Type** These types supports _rem and _add as suffix to remove anything or add anything to them respectively.
 
 ##### pkg_in - Dynamic String / Array Key
@@ -238,8 +236,27 @@ These are in 2 types:
 
  > Cook build system also compares the combine files in the modern version of the cook build system to ensure the robust incremental build support
 
-This documentation covers the basics of Cook 1 Build System , for future updates check other docs.
+### Attributes
+In the `Cook Build System` attributes are used to tell something to the build system and they are executed before anything.
+ - A valid attribute always starts with `@` symbol and if it takes `values` and you have to use ` ` to seperate the attribute name and value, The value can be only written in the same line attribute is written in.
 
+Example:
+```hell6.99mo
+@attribute value
+# or just
+@attribute_with_no_value
+```
+ > All the unknown attributes are ignored by the Cook Build System
+
+#### Known Attributes
+Known attributes are those which the `Cook Build System` knows and allows you to use them to tell something to the build system before any building starts.
+These Attributes includes:-
+ - import : Takes a value as a file path and imports it as the build script (Note priority matters)
+ - system : Takes a value as a system shell command and executes it before any compilation
+ - callback : Takes a value as a system shell command and executes it after all the compilation is finished
+ - show_logs : Takes a boolean value (true or false) and turns on and off the logs.
+
+This documentation covers the basics of Cook 6 Build System , for future updates check other docs.
 
 ## Contributing ?
 Fork this repo , And add new features with only the C++ STL and make a seperate branch for you contribution and make a pull request!

@@ -8,6 +8,7 @@
 
 namespace Cook{
     bool logging_allowed = false;
+    std::string Callback_commands = "";
     void Error (std::string error){
         std::cout << "\033[1;31m[Cook Error]: \033[1;37m" << error <<"\n\033[0m";
         std::exit ( 3 );

@@ -24,7 +24,8 @@
 
 // Required
 namespace Cook {
-    void Parse (std::string path){
+    bool doubleShot = true;
+    void Parse (std::string path, std::string arguments = ""){
         // recipe
         std::ifstream recipe_ifile (path + "/recipe");
         if (!recipe_ifile.is_open()){
@@ -47,8 +48,21 @@ namespace Cook {
         else {
             HELL6_99MO Recipe_H699_IFILE (path + "/recipe");
             Recipe_H699_IFILE.Parse();
+            if (doubleShot) {
+                Cook::Log("Double Shot is enabled!");
+                Cook::Log("Double Shot stage 1 of 2...");
+            }
             Cook::Functions(Recipe_H699_IFILE);
             Cook::Executer();
+            if (doubleShot){
+                doubleShot = false;
+                Cook::Log("Double Shot stage 2 of 2...");
+                std::system (std::string ("cook " + path + " -d " + arguments).c_str());
+            }
+            if (Cook::Callback_commands.length() > 0){
+                Cook::Log("Executing Callback");
+                std::system (Cook::Callback_commands.c_str());
+            }
         }
     }
 }

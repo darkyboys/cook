@@ -24,6 +24,7 @@ namespace Cook{
         for (unsigned long long i = 0;i < source_file_and_commands.size();i++){
             std::string source_file_name = source_file_and_commands[i][0];
             std::string source_file_command = source_file_and_commands[i][1];
+            std::string source_binary_file_name = source_file_and_commands[i][2];
             if (parallel){
                 if (active_threads >= thread_limit){
                     --i;
@@ -54,8 +55,34 @@ namespace Cook{
                         else {
                             increment_h699_file_out.set (source_file_name, content);
                         }
+
+                        std::string command_for_binary_timestamps_to_communication_file = "ls -l --time-style=full-iso " + source_binary_file_name + " > " + communication_file_path;
+                        std::system (command_for_binary_timestamps_to_communication_file.c_str());
+                        std::ifstream ifile_bin_communication_out (communication_file_path);
+                        std::string temp_bin, content_bin;
+                        while (std::getline(ifile_bin_communication_out, temp_bin))
+                            content_bin += temp_bin;
+                        HELL6_99MO_TYPE out_key = increment_h699_file_out.get(source_binary_file_name);
+                        if (out_key.type == H699_UNIDEF){
+                            increment_h699_file_out.new_key (source_binary_file_name, "string");
+                            increment_h699_file_out.set (source_binary_file_name, content_bin);
+                        }
+                        else {
+                            increment_h699_file_out.set (source_binary_file_name, content_bin);
+                        }
+                        // std::cout << "GSET the "<<source_binary_file_name<<" to "<<content_bin<<"\n";
                         increment_h699_file_out.write (increment_h699_file_path);
                         active_threads -= 1;
+
+                        for (unsigned long long compare_index = 0;compare_index < compare_files.size();compare_index++){
+                            // if (compare_files[compare_index][0] == source_file_name){
+                                std::string h699_file_path = compare_files[compare_index][1];
+                                HELL6_99MO h699_file (h699_file_path);
+                                h699_file.Parse();
+                                h699_file.set (compare_files[compare_index][2], increment_h699_file_out.get(compare_files[compare_index][2]).string_value);
+                                h699_file.write(h699_file_path);
+                            // }
+                        }
                     }).detach();
                 }
             }
@@ -82,7 +109,34 @@ namespace Cook{
                 else {
                     increment_h699_file_out.set (source_file_name, content);
                 }
+
+
+                std::string command_for_binary_timestamps_to_communication_file = "ls -l --time-style=full-iso " + source_binary_file_name + " > " + communication_file_path;
+                std::system (command_for_binary_timestamps_to_communication_file.c_str());
+                std::ifstream ifile_bin_communication_out (communication_file_path);
+                std::string temp_bin, content_bin;
+                while (std::getline(ifile_bin_communication_out, temp_bin))
+                    content_bin += temp_bin;
+                HELL6_99MO_TYPE out_key = increment_h699_file_out.get(source_binary_file_name);
+                if (out_key.type == H699_UNIDEF){
+                    increment_h699_file_out.new_key (source_binary_file_name, "string");
+                    increment_h699_file_out.set (source_binary_file_name, content_bin);
+                }
+                else {
+                    increment_h699_file_out.set (source_binary_file_name, content_bin);
+                }
+                // std::cout << "GSET the "<<source_binary_file_name<<" to "<<content_bin<<"\n";
                 increment_h699_file_out.write (increment_h699_file_path);
+                for (unsigned long long compare_index = 0;compare_index < compare_files.size();compare_index++){
+                    // if (compare_files[compare_index][0] == source_file_name){
+                        std::string h699_file_path = compare_files[compare_index][1];
+                        HELL6_99MO h699_file (h699_file_path);
+                        h699_file.Parse();
+                        h699_file.set (compare_files[compare_index][2], increment_h699_file_out.get(compare_files[compare_index][2]).string_value);
+                        h699_file.write(h699_file_path);
+                        // std::cout << "Set: "<<compare_files[compare_index][2]<< " to "<<h699_file.get (compare_files[compare_index][2]).string_value<<" and input was "<<increment_h699_file_out.get(compare_files[compare_index][2]).string_value<<" in file "<<h699_file_path<<"\nBinary: "<<content<<"\n";
+                    // }
+                }
             }
         }
 
