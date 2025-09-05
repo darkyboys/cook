@@ -8,6 +8,8 @@
 
 // functions
 
+#include <cstddef>
+#include <fstream>
 namespace Cook {
     bool increment = false,
          can_increment_skip = false;
@@ -24,6 +26,7 @@ namespace Cook {
                               include,
                               lib;
     std::vector <std::string> compare_pkg_in; // only for pkg_config comparision
+    std::vector <std::vector <std::string>> compare_files = {};
     bool forced_pkg_in_fetch = false;
     std::string pkg_in_libs_data = ""; // contains the -I -l for gcc 
 
@@ -162,10 +165,12 @@ namespace Cook {
                             if (current_source_file_name_in_h699_file.string_value == current_file_time_stamp_from_system){ // Both time stamps matches means the file was not edited so it can be easily ignored but we also need to check the binary which we will check later as if the binary doesn't exists then even if incremental builds are supported , The file must be compiled
                                 // std::cout << "Both Timestamps matches for the file `"<<File.scopes[scopes_index]<<"` So Incremental Build is supported! On this file\n"; // For Debugging only
                                 can_increment_skip = true;
+                                // std::cout << "Increment Status right now: " << can_increment_skip <<"\n";
                             }
                             else {
                                 // std::cout << "Both Timestamps don't matches for the file `"<<File.scopes[scopes_index]<<"` So Incremental Build is not supported! On this file\n"; // For Debugging only
                                 can_increment_skip = false;
+                                // std::cout << "Increment Status right now: " << can_increment_skip <<"\n";
                             }
                         }
                         else {
@@ -179,6 +184,18 @@ namespace Cook {
 
                 // functionality implementation
                 if (can_increment_skip){ // When increment build is possible then run this block , This will check if the executable exists or not, If the executable already exists then okay and skip this target, Othervise compile it!!!!
+                    // bin
+                    HELL6_99MO_TYPE get_bin_value = File.get (File.scopes[scopes_index] + ".bin");
+                    if (get_bin_value.type != H699_UNIDEF){
+                        if (get_bin_value.type == "string"){
+                            bin = get_bin_value.string_value;
+                        }
+                        else {
+                            Cook::Error("Syntax Error --> `bin` requires an string value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
+                        }
+                    }
+                    
+                    
                     HELL6_99MO_TYPE get_out_value = File.get (File.scopes[scopes_index] + ".out");
                     std::string out = File.scopes[scopes_index].substr(0, File.scopes[scopes_index].find("."));
                     if (get_out_value.type != H699_UNIDEF){
@@ -194,11 +211,14 @@ namespace Cook {
                     std::ifstream ifile_binary (bin + "/" + out);
                     if (ifile_binary.is_open()){ // file is open so ignore
                         can_increment_skip = true;
+                        // std::cout << "The file output file: "<<bin + "/" + out<<" Exists!\n";
                     }
                     else { // the file is not open to build it.
                         can_increment_skip = false;
+                        // std::cout << "The file output file: "<<bin + "/" + out<<" does not Exists!\n";
                     }
                 }
+                // std::cout << "After out checking , Increment Status: "<<can_increment_skip<<"\n";
 
                 // Check the combine to register it self too!
                  // Check the combined files's timestamps
@@ -255,6 +275,31 @@ namespace Cook {
                     }
                 }
                 // std::cout << "FInal Check!\n";
+                // Make h699
+                
+                std::string source_file_h699_name = File.scopes[scopes_index] + ".h699";
+                for (std::size_t index = 0;index < source_file_h699_name.length();index++){
+                    if (source_file_h699_name[index] == '/'){
+                        source_file_h699_name[index] = '.';
+                    }
+                }
+                
+                source_file_h699_name = cookcache_directory + source_file_h699_name;
+                
+                std::ifstream source_file_h699_opened (source_file_h699_name);
+                if (!source_file_h699_opened.is_open()){
+                    std::ofstream source_file_h699_new(source_file_h699_name);
+                }
+                HELL6_99MO source_file_h699(increment_h699_file_path);
+                bool can_process_h699 = true;
+                if (File.scopes[scopes_index] != "global"){
+                    source_file_h699 = HELL6_99MO(source_file_h699_name);
+                    source_file_h699.Parse();
+                }
+                else {
+                    can_process_h699 = false;
+                }
+
                 for (std::string file : combine){
                     bool is_timestamp_found = false;
                     for (std::string file_Name_In_Timestamps : combine_files_timestamps){
@@ -273,6 +318,50 @@ namespace Cook {
                         }
                     }
                 }
+
+                for (std::string file : combine){
+                    // source file .h699 checker
+                    if (can_process_h699){
+                        HELL6_99MO increment_h699 (increment_h699_file_path);
+                        increment_h699.Parse();
+                        std::string file_timestamp = increment_h699.get (file).string_value;
+                        // std::cout << "File Timestamp: " << file_timestamp << "\nFile: "<<file<<"\n";
+
+                        HELL6_99MO_TYPE source_file_timestamp_checker = source_file_h699.get(file);
+                        if (source_file_timestamp_checker.type == H699_UNIDEF){
+                            can_increment_skip = false;
+                            source_file_h699.new_key (file, "string");
+                            source_file_h699.set (file, file_timestamp);
+                            source_file_h699.write (source_file_h699_name);
+                            // std::cout << "Not Matched!!!!\n"<<"at: "<<source_file_h699_name<<"\n"<<"Results: "<<file_timestamp << " and "<<"UNIDEF"<<"\n";
+                            compare_files.push_back ({
+                                File.scopes[scopes_index],
+                                source_file_h699_name,
+                                file
+                            });
+                            continue;
+                        }
+                        else if (source_file_timestamp_checker.type == "string"){
+                            if (source_file_timestamp_checker.string_value != file_timestamp){
+                                can_increment_skip = false;
+                                source_file_h699.set (file, file_timestamp);
+                                source_file_h699.write (source_file_h699_name);
+                                // std::cout << "Not Matched!!!!\n"<<"at: "<<source_file_h699_name<<"\n"<<"Results: "<<file_timestamp << " and "<<source_file_timestamp_checker.string_value<<"\n";
+                                compare_files.push_back ({
+                                    File.scopes[scopes_index],
+                                    source_file_h699_name,
+                                    file
+                                });
+                            }
+                            else {
+                                // std::cout << "Matched!!!!\n";
+                            }
+                        }
+                        else {
+                            Cook::Error("Corrupted Configuration at file `" + source_file_h699_name  + "`.");
+                        }
+                    }
+                }
                 
 
                 // Check the increment back
@@ -280,6 +369,9 @@ namespace Cook {
                 if (can_increment_skip and not increment){
                     can_increment_skip = not can_increment_skip;
                 }
+
+                // std::cout << "Increment Status: "<<can_increment_skip<<"\n";
+
                 if (can_increment_skip){ // increment can be still skipped then skip it
                     continue;
                 }
@@ -717,7 +809,7 @@ namespace Cook {
                         std::string command = psystem + "\n" + compiler + " " + compiler_parguments + " " + File.scopes[scopes_index] + " " + combine_arguments + "-o " + bin + "/" + out + " " + include_arguments + lib_arguments + pkg_in_libs_data + " " + compiler_arguments + "\n" + system;
                         // std::cout << "Compiler command: "<<command<<"\n"; // for debugging only
                         std::filesystem::create_directory(bin);
-                        source_file_and_commands.push_back({File.scopes[scopes_index], command});
+                        source_file_and_commands.push_back({File.scopes[scopes_index], command, bin + "/" + out});
                     }
                     else {
                         can_build_skip = false;

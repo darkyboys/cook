@@ -8,7 +8,7 @@
 
 #include <string>
 #ifndef COOK_VERSION
-#define COOK_VERSION 5
+#define COOK_VERSION 6
 
 // Headers
 #include "needed.hh"
@@ -16,6 +16,7 @@
 int main(int argc, char* argv[]) {
     Cook::increment = true;
     std::string path = ".";
+    std::string args = "";
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -29,9 +30,11 @@ int main(int argc, char* argv[]) {
             if (i + 1 < argc) {
                 std::string val = argv[i + 1];
                 if (val == "true") {
+                    args += " -i true";
                     Cook::increment = true;
                     ++i; // Skip next argument
                 } else if (val == "false") {
+                    args += " -i false";
                     Cook::increment = false;
                     ++i; // Skip next argument
                 } else {
@@ -47,6 +50,7 @@ int main(int argc, char* argv[]) {
                 std::string val = argv[i + 1];
                 for (unsigned long long x = 0;x < val.length();x++){
                     if (val[x] >= '0' and val[x] <= '9'){
+                        args += " -t " + val;
                         continue;
                     }
                     else {
@@ -62,6 +66,13 @@ int main(int argc, char* argv[]) {
 
         else if (arg == "--parallel" || arg == "-p") {
             Cook::parallel = true;
+            args += " -p";
+            // std::exit(0);
+        }
+
+        else if (arg == "--doubleshot" || arg == "-d") {
+            Cook::doubleShot = false;
+            args += " -d";
             // std::exit(0);
         }
 
@@ -76,7 +87,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    Cook::Parse(path);
+    Cook::Parse(path, args);
 }
 
 

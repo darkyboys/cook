@@ -1,0 +1,34 @@
+@show_logs true
+# global:
+#    combine = [
+#        "demo/3/lib.cc",
+#        "demo/3/lib2.cc"
+#    ]
+
+demo/3/lib.cc:
+    compiler_parguments = "-c"
+    out = "lib.o"
+    bin = "demo/3"
+
+demo/3/lib2.cc:
+    compiler_parguments = "-c"
+    out = "lib2.o"
+    bin = "demo/3"
+
+demo/3/main.cc:
+    compiler_parguments = ""
+    combine = [
+        "demo/3/lib.o",
+        "demo/3/lib2.o"
+    ]
+    out = "main"
+    bin = "demo/3"
+
+demo/3/main2.cc:
+    compiler_parguments = ""
+    combine = [
+        "demo/3/lib.o",
+        "demo/3/lib2.o"
+    ]
+    out = "main2"
+    bin = "demo/3"
