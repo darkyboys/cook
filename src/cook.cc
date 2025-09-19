@@ -8,7 +8,7 @@
 
 #include <string>
 #ifndef COOK_VERSION
-#define COOK_VERSION 6
+#define COOK_VERSION 7
 
 // Headers
 #include "needed.hh"
