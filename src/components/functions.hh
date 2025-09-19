@@ -224,141 +224,143 @@ namespace Cook {
                  // Check the combined files's timestamps
                 // combine
                 // std::cout << "Combine Check!\n";
-                HELL6_99MO_TYPE get_combine_value = File.get (File.scopes[scopes_index] + ".combine");
-                if (get_combine_value.type != H699_UNIDEF){
-                    if (get_combine_value.type == "string"){
-                        combine = {get_combine_value.string_value};
-                    }
-                    else if (get_combine_value.type == "array"){
-                        combine = get_combine_value.array_value;
-                    }
-                    else {
-                        Cook::Error("Syntax Error --> `combine` requires an string or an array value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
-                    }
-                }
-                // combine_add
-                HELL6_99MO_TYPE get_combine_add_value = File.get (File.scopes[scopes_index] + ".combine_add");
-                if (get_combine_add_value.type != H699_UNIDEF){
-                    if (get_combine_add_value.type == "string"){
-                        combine.push_back(get_combine_add_value.string_value);
-                    }
-                    else if (get_combine_add_value.type == "array"){
-                        for (unsigned long long combine_add_index = 0;combine_add_index < get_combine_add_value.array_value.size();combine_add_index++){
-                            combine.push_back(get_combine_add_value.array_value[combine_add_index]);
+                if (can_increment_skip){
+                    HELL6_99MO_TYPE get_combine_value = File.get (File.scopes[scopes_index] + ".combine");
+                    if (get_combine_value.type != H699_UNIDEF){
+                        if (get_combine_value.type == "string"){
+                            combine = {get_combine_value.string_value};
+                        }
+                        else if (get_combine_value.type == "array"){
+                            combine = get_combine_value.array_value;
+                        }
+                        else {
+                            Cook::Error("Syntax Error --> `combine` requires an string or an array value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
                         }
                     }
-                    else {
-                        Cook::Error("Syntax Error --> `combine_add` requires an string or an array value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
-                    }
-                }
-                // combine_rem
-                HELL6_99MO_TYPE get_combine_rem_value = File.get (File.scopes[scopes_index] + ".combine_rem");
-                if (get_combine_rem_value.type != H699_UNIDEF){
-                    if (get_combine_rem_value.type == "string"){
-                        for (unsigned long long combine_rem_index_combine = 0;combine_rem_index_combine < combine.size();combine_rem_index_combine++){
-                            if (combine[combine_rem_index_combine] == get_combine_rem_value.string_value){
-                                combine[combine_rem_index_combine] = "";
+                    // combine_add
+                    HELL6_99MO_TYPE get_combine_add_value = File.get (File.scopes[scopes_index] + ".combine_add");
+                    if (get_combine_add_value.type != H699_UNIDEF){
+                        if (get_combine_add_value.type == "string"){
+                            combine.push_back(get_combine_add_value.string_value);
+                        }
+                        else if (get_combine_add_value.type == "array"){
+                            for (unsigned long long combine_add_index = 0;combine_add_index < get_combine_add_value.array_value.size();combine_add_index++){
+                                combine.push_back(get_combine_add_value.array_value[combine_add_index]);
                             }
                         }
+                        else {
+                            Cook::Error("Syntax Error --> `combine_add` requires an string or an array value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
+                        }
                     }
-                    else if (get_combine_rem_value.type == "array"){
-                        for (unsigned long long combine_rem_index = 0;combine_rem_index < get_combine_rem_value.array_value.size();combine_rem_index++){
+                    // combine_rem
+                    HELL6_99MO_TYPE get_combine_rem_value = File.get (File.scopes[scopes_index] + ".combine_rem");
+                    if (get_combine_rem_value.type != H699_UNIDEF){
+                        if (get_combine_rem_value.type == "string"){
                             for (unsigned long long combine_rem_index_combine = 0;combine_rem_index_combine < combine.size();combine_rem_index_combine++){
-                                if (combine[combine_rem_index_combine] == get_combine_rem_value.array_value[combine_rem_index]){
+                                if (combine[combine_rem_index_combine] == get_combine_rem_value.string_value){
                                     combine[combine_rem_index_combine] = "";
                                 }
                             }
                         }
+                        else if (get_combine_rem_value.type == "array"){
+                            for (unsigned long long combine_rem_index = 0;combine_rem_index < get_combine_rem_value.array_value.size();combine_rem_index++){
+                                for (unsigned long long combine_rem_index_combine = 0;combine_rem_index_combine < combine.size();combine_rem_index_combine++){
+                                    if (combine[combine_rem_index_combine] == get_combine_rem_value.array_value[combine_rem_index]){
+                                        combine[combine_rem_index_combine] = "";
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            Cook::Error("Syntax Error --> `combine_rem` requires an string or an array value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
+                        }
+                    }
+                    // std::cout << "FInal Check!\n";
+                    // Make h699
+
+                    std::string source_file_h699_name = File.scopes[scopes_index] + ".h699";
+                    for (std::size_t index = 0;index < source_file_h699_name.length();index++){
+                        if (source_file_h699_name[index] == '/'){
+                            source_file_h699_name[index] = '.';
+                        }
+                    }
+
+                    source_file_h699_name = cookcache_directory + source_file_h699_name;
+
+                    std::ifstream source_file_h699_opened (source_file_h699_name);
+                    if (!source_file_h699_opened.is_open()){
+                        std::ofstream source_file_h699_new(source_file_h699_name);
+                    }
+                    HELL6_99MO source_file_h699(increment_h699_file_path);
+                    bool can_process_h699 = true;
+                    if (File.scopes[scopes_index] != "global"){
+                        source_file_h699 = HELL6_99MO(source_file_h699_name);
+                        source_file_h699.Parse();
                     }
                     else {
-                        Cook::Error("Syntax Error --> `combine_rem` requires an string or an array value but the entered value was a Non-String Value! Error On File `" + File.scopes[scopes_index] + "` Please fix this error by changing the type to string.");
+                        can_process_h699 = false;
                     }
-                }
-                // std::cout << "FInal Check!\n";
-                // Make h699
-                
-                std::string source_file_h699_name = File.scopes[scopes_index] + ".h699";
-                for (std::size_t index = 0;index < source_file_h699_name.length();index++){
-                    if (source_file_h699_name[index] == '/'){
-                        source_file_h699_name[index] = '.';
-                    }
-                }
-                
-                source_file_h699_name = cookcache_directory + source_file_h699_name;
-                
-                std::ifstream source_file_h699_opened (source_file_h699_name);
-                if (!source_file_h699_opened.is_open()){
-                    std::ofstream source_file_h699_new(source_file_h699_name);
-                }
-                HELL6_99MO source_file_h699(increment_h699_file_path);
-                bool can_process_h699 = true;
-                if (File.scopes[scopes_index] != "global"){
-                    source_file_h699 = HELL6_99MO(source_file_h699_name);
-                    source_file_h699.Parse();
-                }
-                else {
-                    can_process_h699 = false;
-                }
 
-                for (std::string file : combine){
-                    bool is_timestamp_found = false;
-                    for (std::string file_Name_In_Timestamps : combine_files_timestamps){
-                        if (file == file_Name_In_Timestamps){
-                            // std::cout << "Time stamps didn't matched\n";
-                            can_increment_skip = false;
-                            is_timestamp_found = true;
-                            break;
-                        }
-                    }
-                    if (not is_timestamp_found){
-                        if (not Check_File_Timestamps(File, file)){ // Timestamps didn't matched
-                            combine_files_timestamps.push_back (file);
-                            can_increment_skip = false;
-                            break;
-                        }
-                    }
-                }
-
-                for (std::string file : combine){
-                    // source file .h699 checker
-                    if (can_process_h699){
-                        HELL6_99MO increment_h699 (increment_h699_file_path);
-                        increment_h699.Parse();
-                        std::string file_timestamp = increment_h699.get (file).string_value;
-                        // std::cout << "File Timestamp: " << file_timestamp << "\nFile: "<<file<<"\n";
-
-                        HELL6_99MO_TYPE source_file_timestamp_checker = source_file_h699.get(file);
-                        if (source_file_timestamp_checker.type == H699_UNIDEF){
-                            can_increment_skip = false;
-                            source_file_h699.new_key (file, "string");
-                            source_file_h699.set (file, file_timestamp);
-                            source_file_h699.write (source_file_h699_name);
-                            // std::cout << "Not Matched!!!!\n"<<"at: "<<source_file_h699_name<<"\n"<<"Results: "<<file_timestamp << " and "<<"UNIDEF"<<"\n";
-                            compare_files.push_back ({
-                                File.scopes[scopes_index],
-                                source_file_h699_name,
-                                file
-                            });
-                            continue;
-                        }
-                        else if (source_file_timestamp_checker.type == "string"){
-                            if (source_file_timestamp_checker.string_value != file_timestamp){
+                    for (std::string file : combine){
+                        bool is_timestamp_found = false;
+                        for (std::string file_Name_In_Timestamps : combine_files_timestamps){
+                            if (file == file_Name_In_Timestamps){
+                                // std::cout << "Time stamps didn't matched\n";
                                 can_increment_skip = false;
+                                is_timestamp_found = true;
+                                break;
+                            }
+                        }
+                        if (not is_timestamp_found){
+                            if (not Check_File_Timestamps(File, file)){ // Timestamps didn't matched
+                                combine_files_timestamps.push_back (file);
+                                can_increment_skip = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    for (std::string file : combine){
+                        // source file .h699 checker
+                        if (can_process_h699){
+                            HELL6_99MO increment_h699 (increment_h699_file_path);
+                            increment_h699.Parse();
+                            std::string file_timestamp = increment_h699.get (file).string_value;
+                            // std::cout << "File Timestamp: " << file_timestamp << "\nFile: "<<file<<"\n";
+
+                            HELL6_99MO_TYPE source_file_timestamp_checker = source_file_h699.get(file);
+                            if (source_file_timestamp_checker.type == H699_UNIDEF){
+                                can_increment_skip = false;
+                                source_file_h699.new_key (file, "string");
                                 source_file_h699.set (file, file_timestamp);
                                 source_file_h699.write (source_file_h699_name);
-                                // std::cout << "Not Matched!!!!\n"<<"at: "<<source_file_h699_name<<"\n"<<"Results: "<<file_timestamp << " and "<<source_file_timestamp_checker.string_value<<"\n";
+                                // std::cout << "Not Matched!!!!\n"<<"at: "<<source_file_h699_name<<"\n"<<"Results: "<<file_timestamp << " and "<<"UNIDEF"<<"\n";
                                 compare_files.push_back ({
                                     File.scopes[scopes_index],
                                     source_file_h699_name,
                                     file
                                 });
+                                continue;
+                            }
+                            else if (source_file_timestamp_checker.type == "string"){
+                                if (source_file_timestamp_checker.string_value != file_timestamp){
+                                    can_increment_skip = false;
+                                    source_file_h699.set (file, file_timestamp);
+                                    source_file_h699.write (source_file_h699_name);
+                                    // std::cout << "Not Matched!!!!\n"<<"at: "<<source_file_h699_name<<"\n"<<"Results: "<<file_timestamp << " and "<<source_file_timestamp_checker.string_value<<"\n";
+                                    compare_files.push_back ({
+                                        File.scopes[scopes_index],
+                                        source_file_h699_name,
+                                        file
+                                    });
+                                }
+                                else {
+                                    // std::cout << "Matched!!!!\n";
+                                }
                             }
                             else {
-                                // std::cout << "Matched!!!!\n";
+                                Cook::Error("Corrupted Configuration at file `" + source_file_h699_name  + "`.");
                             }
-                        }
-                        else {
-                            Cook::Error("Corrupted Configuration at file `" + source_file_h699_name  + "`.");
                         }
                     }
                 }
