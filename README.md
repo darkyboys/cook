@@ -256,7 +256,7 @@ These Attributes includes:-
  - callback : Takes a value as a system shell command and executes it after all the compilation is finished
  - show_logs : Takes a boolean value (true or false) and turns on and off the logs.
 
-This documentation covers the basics of Cook 6 Build System , for future updates check other docs.
+This documentation covers the basics of Cook 7 Build System , for future updates check other docs.
 
 ## Contributing ?
 Fork this repo , And add new features with only the C++ STL and make a seperate branch for you contribution and make a pull request!
