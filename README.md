@@ -1,7 +1,7 @@
 # Cook Build System
 <img src="img/cook Banner.png">
 
-*A Perfect Build Systen For Your C And C++ Projects!*. Cook is an Open Source Fast Build System designed for linux in mind, But can seamlessly work on Windows with the help of WSL, And even natively but with some features missing like pkg_in won't be supported , Incremental builds won't be supported as both of these relies on linux / UNIX Environment , Cook also can't be installed on windows directly as it's installation script strictly follows the Linux Standards. So if you are using WSL you may have some limitations but not too much compared to natively compiling from source code. So with that's in mind let's get started
+*A Perfect Build System For Your C And C++ Projects!*. Cook is an Open Source Fast Build System designed for linux in mind, But can seamlessly work on Windows with the help of WSL, And even natively but with some features missing like pkg_in won't be supported , Incremental builds won't be supported as both of these relies on linux / UNIX Environment , Cook also can't be installed on windows directly as it's installation script strictly follows the Linux Standards. So if you are using WSL you may have some limitations but not too much compared to natively compiling from source code. So with that's in mind let's get started
 
 ---
 
